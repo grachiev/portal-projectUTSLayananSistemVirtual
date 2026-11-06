@@ -3,6 +3,114 @@
   function at(days, h, m) { var d = new Date(NOW + days * D); d.setHours(h == null ? 23 : h, m == null ? 59 : m, 0, 0); return d.getTime(); }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
+
+  /* ---------- akun (disimpan di browser perangkat ini) ---------- */
+  var USERS_KEY = 'pbc-users', SESSION_KEY = 'pbc-session';
+  function loadUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]') || []; } catch (e) { return []; } }
+  function saveUsers(list) { try { localStorage.setItem(USERS_KEY, JSON.stringify(list)); return true; } catch (e) { return false; } }
+  function getSession() { try { return localStorage.getItem(SESSION_KEY); } catch (e) { return null; } }
+  function setSession(id) { try { if (id) localStorage.setItem(SESSION_KEY, id); else localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+  function hex(bytes) { return Array.prototype.map.call(bytes, function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
+  function randomSalt() {
+    var a = new Uint8Array(16);
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a); else for (var i = 0; i < 16; i++) a[i] = Math.floor(Math.random() * 256);
+    return hex(a);
+  }
+  /* Kata sandi tidak disimpan apa adanya: yang disimpan hanya hash SHA-256 beserta salt acak. */
+  function hashPw(pw, salt) {
+    var text = salt + ':' + pw;
+    if (window.crypto && crypto.subtle && window.TextEncoder) {
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) { return hex(new Uint8Array(buf)); });
+    }
+    var h = 5381; for (var i = 0; i < text.length; i++) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0;
+    return Promise.resolve('x' + h.toString(16));
+  }
+  function logout() { setSession(null); location.hash = ''; location.reload(); }
+
+  function initAuth() {
+    var auth = document.getElementById('auth');
+    auth.hidden = false;
+    var fr = document.getElementById('form-register'), fl = document.getElementById('form-login');
+    function val(id) { return document.getElementById(id).value.trim(); }
+    function clearErrors(f) {
+      f.querySelectorAll('.err').forEach(function (e) { e.textContent = ''; });
+      f.querySelectorAll('.fld.bad').forEach(function (e) { e.classList.remove('bad'); });
+      var al = f.querySelector('.alert'); if (al) al.textContent = '';
+    }
+    function setErr(f, key, msg) {
+      var e = f.querySelector('.err[data-for="' + key + '"]'); if (!e) return;
+      e.textContent = msg;
+      var box = e.closest('.fld'); if (box) box.classList.add('bad');
+    }
+    function show(which) {
+      fr.hidden = which !== 'register'; fl.hidden = which !== 'login';
+      auth.querySelectorAll('.tabs [data-tab]').forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.tab === which)); });
+      clearErrors(fr); clearErrors(fl);
+    }
+    auth.querySelectorAll('[data-tab]').forEach(function (t) { t.addEventListener('click', function () { show(t.dataset.tab); }); });
+    auth.querySelectorAll('[data-toggle]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var ids = b.dataset.toggle.split(','), reveal = document.getElementById(ids[0]).type === 'password';
+        ids.forEach(function (id) { document.getElementById(id).type = reveal ? 'text' : 'password'; });
+        b.textContent = reveal ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi';
+        b.setAttribute('aria-pressed', String(reveal));
+      });
+    });
+    function enter() { location.hash = 'beranda'; location.reload(); }
+    function focusFirstBad(f) { var x = f.querySelector('.fld.bad input, .fld.bad select'); if (x) x.focus(); }
+
+    fr.addEventListener('submit', function (ev) {
+      ev.preventDefault(); clearErrors(fr);
+      var v = {
+        nama: val('reg-nama').replace(/\s+/g, ' '), nim: val('reg-nim'), prodi: document.getElementById('reg-prodi').value,
+        email: val('reg-email').toLowerCase(), pass: document.getElementById('reg-pass').value, pass2: document.getElementById('reg-pass2').value,
+        ok: document.getElementById('reg-ok').checked
+      };
+      var bad = 0;
+      function no(k, m) { setErr(fr, k, m); bad++; }
+      if (v.nama.length < 3) no('nama', 'Isi nama lengkap, minimal 3 huruf.');
+      if (!/^\d{8,12}$/.test(v.nim)) no('nim', 'NIM terdiri dari 8 sampai 12 angka.');
+      if (!v.prodi) no('prodi', 'Pilih program studi.');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) no('email', 'Tulis alamat email yang valid, misalnya nama@email.com.');
+      if (v.pass.length < 8 || !/[A-Za-z]/.test(v.pass) || !/\d/.test(v.pass)) no('pass', 'Kata sandi minimal 8 karakter dan berisi huruf serta angka.');
+      else if (v.pass !== v.pass2) no('pass2', 'Ulangi kata sandi dengan isian yang sama.');
+      if (!v.ok) { fr.querySelector('.err[data-for="ok"]').textContent = 'Centang persetujuan untuk melanjutkan.'; bad++; }
+      if (bad) { focusFirstBad(fr); return; }
+      var list = loadUsers();
+      if (list.some(function (u) { return u.nim === v.nim; })) { setErr(fr, 'nim', 'NIM ini sudah terdaftar. Silakan masuk.'); focusFirstBad(fr); return; }
+      if (list.some(function (u) { return u.email === v.email; })) { setErr(fr, 'email', 'Email ini sudah terdaftar. Silakan masuk.'); focusFirstBad(fr); return; }
+      var salt = randomSalt();
+      hashPw(v.pass, salt).then(function (h) {
+        var user = { id: 'u' + Date.now().toString(36) + salt.slice(0, 4), nama: v.nama, nim: v.nim, prodi: v.prodi, email: v.email, salt: salt, hash: h, dibuat: Date.now() };
+        list.push(user);
+        if (!saveUsers(list)) { fr.querySelector('.alert').textContent = 'Browser menolak menyimpan akun. Matikan mode privat atau izinkan penyimpanan situs, lalu coba lagi.'; return; }
+        setSession(user.id); enter();
+      });
+    });
+
+    fl.addEventListener('submit', function (ev) {
+      ev.preventDefault(); clearErrors(fl);
+      var id = val('log-id').toLowerCase(), pass = document.getElementById('log-pass').value, bad = 0;
+      if (!id) { setErr(fl, 'id', 'Isi NIM atau email.'); bad++; }
+      if (!pass) { setErr(fl, 'pass', 'Isi kata sandi.'); bad++; }
+      if (bad) { focusFirstBad(fl); return; }
+      var user = loadUsers().filter(function (u) { return u.nim === id || u.email === id; })[0];
+      var fail = function () { fl.querySelector('.alert').textContent = 'NIM, email, atau kata sandi tidak cocok. Periksa lagi atau daftar akun baru.'; };
+      if (!user) { fail(); return; }
+      hashPw(pass, user.salt).then(function (h) { if (h !== user.hash) fail(); else { setSession(user.id); enter(); } });
+    });
+
+    show('register');
+  }
+
+  var me = loadUsers().filter(function (u) { return u.id === getSession(); })[0];
+  if (!me) { initAuth(); return; }
+  document.querySelector('.app').hidden = false;
+  document.getElementById('who-name').textContent = me.nama;
+  document.getElementById('who-meta').textContent = 'NIM ' + me.nim + ' · ' + me.prodi;
+  document.getElementById('logout').addEventListener('click', logout);
+  document.getElementById('logout2').addEventListener('click', logout);
+
   /* ---------- data contoh ---------- */
   var courses = [
     { id: 'jarkom', kode: 'IF2101', nama: 'Jaringan Komputer', dosen: 'James Adam Seo, S.Kom., M.Kom.', sks: 3, pertemuan: [
@@ -47,8 +155,8 @@
     { id: 't3', c: 'spk', judul: 'Ringkasan Jenis Hypervisor', due: at(-4), desc: 'Ringkasan satu halaman tentang perbedaan hypervisor tipe 1 dan tipe 2.' }
   ];
   var baseSubs = {
-    t5: { file: 'routing_statis_madonia.zip', at: at(-1, 20, 15) },
-    t3: { file: 'Hypervisor_Madonia.pdf', at: at(-4, 14, 5), nilai: 88, catatan: 'Penjelasan sudah runtut. Tambahkan contoh produk untuk tiap tipe hypervisor.' }
+    t5: { file: 'routing_statis.zip', at: at(-1, 20, 15) },
+    t3: { file: 'Hypervisor.pdf', at: at(-4, 14, 5), nilai: 88, catatan: 'Penjelasan sudah runtut. Tambahkan contoh produk untuk tiap tipe hypervisor.' }
   };
 
   var exams = [
@@ -71,7 +179,7 @@
   function eById(id) { return exams.filter(function (e) { return e.id === id; })[0]; }
 
   /* ---------- state ---------- */
-  var KEY = 'pbc-v1', saved = {};
+  var KEY = 'pbc-v2-' + me.id, saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
   var state = {
     route: 'beranda', course: saved.course || 'jarkom',
@@ -132,7 +240,7 @@
     var pend = tugas.filter(function (t) { return taskStatus(t) === 'belum'; }).sort(function (a, b) { return a.due - b.due; });
     var open = exams.filter(function (e) { return examStatus(e) === 'buka'; });
     var run = state.exam;
-    var html = '<div class="head"><span class="eyebrow">Semester Ganjil 2026/2027</span><h1>' + sapa + ', Madonia</h1><p>Materi, tugas, dan ujian semua mata kuliahmu ada di sini. Kerjakan dari perangkat apa saja.</p></div>';
+    var html = '<div class="head"><span class="eyebrow">Semester Ganjil 2026/2027</span><h1>' + sapa + ', ' + esc(me.nama.split(' ')[0]) + '</h1><p>Materi, tugas, dan ujian semua mata kuliahmu ada di sini. Kerjakan dari perangkat apa saja.</p></div>';
     html += '<div class="cols"><section class="panel"><h2>Tugas yang perlu dikerjakan</h2>';
     html += pend.length ? '<ul class="rows">' + pend.map(function (t) {
       return '<li><div class="t"><b>' + esc(t.judul) + '</b><span class="sub">' + esc(cById(t.c).nama) + ' · tenggat ' + fmt(t.due) + '</span></div><span class="pill wait">' + rel(t.due) + '</span></li>';

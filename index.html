@@ -10,26 +10,84 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
+<div id="auth" class="auth" hidden>
+  <section class="auth-intro">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="var(--accent)"/><path d="M8 24V11.5c0-.6.5-1 1-.9C12.5 11 15 12 17 14c2-2 4.500-3 8-3.400.5-.1 1 .3 1 .9V24c-3.500.2-6 1.200-9 3.200C14 25.200 11.500 24.200 8 24Z" fill="none" stroke="var(--on-accent)" stroke-width="1.800" stroke-linejoin="round"/><path d="M17 14v13" stroke="var(--on-accent)" stroke-width="1.800"/></svg>
+      <div><b>Belajar Cendekia</b><span>Universitas Cendekia Nusantara</span></div>
+    </div>
+    <h1>Kelas, tugas, dan ujianmu dalam satu portal</h1>
+    <p>Daftarkan akunmu dengan NIM untuk mengakses materi kuliah, mengumpulkan tugas, dan mengikuti ujian secara daring.</p>
+    <ul class="auth-points">
+      <li><span class="eyebrow">Materi</span><span>Modul, video, dan slide untuk setiap pertemuan.</span></li>
+      <li><span class="eyebrow">Tugas</span><span>Unggah berkas sebelum tenggat dan pantau nilainya.</span></li>
+      <li><span class="eyebrow">Ujian</span><span>Kerjakan dengan penghitung waktu dan lihat hasilnya.</span></li>
+    </ul>
+  </section>
+  <section class="auth-card" aria-label="Daftar atau masuk">
+    <div class="tabs" role="group" aria-label="Pilih tindakan">
+      <button type="button" data-tab="register" aria-selected="true">Daftar</button>
+      <button type="button" data-tab="login" aria-selected="false">Masuk</button>
+    </div>
+
+    <form id="form-register" novalidate>
+      <label class="fld"><span>Nama lengkap</span><input id="reg-nama" type="text" autocomplete="name" placeholder="Nama sesuai KRS"><small class="err" data-for="nama"></small></label>
+      <label class="fld"><span>NIM</span><input id="reg-nim" type="text" inputmode="numeric" autocomplete="off" placeholder="Contoh: 2023110042"><small class="err" data-for="nim"></small></label>
+      <label class="fld"><span>Program studi</span>
+        <select id="reg-prodi">
+          <option value="">Pilih program studi</option>
+          <option>Teknik Informatika</option>
+          <option>Sistem Informasi</option>
+          <option>Teknologi Informasi</option>
+          <option>Teknik Komputer</option>
+          <option>Lainnya</option>
+        </select><small class="err" data-for="prodi"></small></label>
+      <label class="fld"><span>Email</span><input id="reg-email" type="email" autocomplete="email" placeholder="nama@email.com"><small class="err" data-for="email"></small></label>
+      <label class="fld"><span>Kata sandi</span><input id="reg-pass" type="password" autocomplete="new-password" placeholder="Minimal 8 karakter, huruf dan angka"><small class="err" data-for="pass"></small></label>
+      <label class="fld"><span>Ulangi kata sandi</span><input id="reg-pass2" type="password" autocomplete="new-password"><small class="err" data-for="pass2"></small></label>
+      <button class="link" type="button" data-toggle="reg-pass,reg-pass2" aria-pressed="false">Tampilkan kata sandi</button>
+      <label class="fld-check"><input id="reg-ok" type="checkbox"><span>Saya mengisi data dengan benar dan bersedia mengikuti tata tertib perkuliahan daring.</span></label>
+      <small class="err" data-for="ok"></small>
+      <p class="alert" role="alert"></p>
+      <button class="btn" type="submit">Buat akun</button>
+      <p class="sub">Sudah punya akun? <button class="link inline" type="button" data-tab="login">Masuk di sini</button></p>
+    </form>
+
+    <form id="form-login" novalidate hidden>
+      <label class="fld"><span>NIM atau email</span><input id="log-id" type="text" autocomplete="username"><small class="err" data-for="id"></small></label>
+      <label class="fld"><span>Kata sandi</span><input id="log-pass" type="password" autocomplete="current-password"><small class="err" data-for="pass"></small></label>
+      <button class="link" type="button" data-toggle="log-pass" aria-pressed="false">Tampilkan kata sandi</button>
+      <p class="alert" role="alert"></p>
+      <button class="btn" type="submit">Masuk</button>
+      <p class="sub">Belum punya akun? <button class="link inline" type="button" data-tab="register">Daftar di sini</button></p>
+    </form>
+
+    <p class="sub note">Mode demo: akun disimpan di browser perangkat ini saja, belum di server kampus.</p>
+  </section>
+</div>
+
+<div class="app" hidden>
   <aside class="side">
     <div class="brand">
       <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="var(--accent)"/><path d="M8 24V11.5c0-.6.5-1 1-.9C12.5 11 15 12 17 14c2-2 4.500-3 8-3.400.5-.1 1 .3 1 .9V24c-3.500.2-6 1.200-9 3.200C14 25.200 11.500 24.200 8 24Z" fill="none" stroke="var(--on-accent)" stroke-width="1.800" stroke-linejoin="round"/><path d="M17 14v13" stroke="var(--on-accent)" stroke-width="1.800"/></svg>
-      <div><b>Belajar Virtual</b><span>Universitas Citra Bangsa</span></div>
+      <div><b>Belajar Cendekia</b><span>Universitas Cendekia Nusantara</span></div>
     </div>
     <nav class="nav" aria-label="Menu utama">
       <a href="#beranda" data-r="beranda">Beranda</a>
       <a href="#materi" data-r="materi">Materi kuliah</a>
       <a href="#tugas" data-r="tugas">Tugas <span class="n" id="n-tugas"></span></a>
       <a href="#ujian" data-r="ujian">Ujian <span class="n" id="n-ujian"></span></a>
+      <button class="nav-out" id="logout2" type="button">Keluar</button>
     </nav>
     <div class="who">
-      <div><div class="nm">Madonia Della Udju</div><div class="sub mono">NIM 248111047 · Semester 5</div></div>
+      <div><div class="nm" id="who-name"></div><div class="sub mono" id="who-meta"></div></div>
       <div class="quota">
         <span class="sub">Akun aktif semester ini (contoh)</span>
         <div class="meter" role="img" aria-label="438 dari 500 akun"><i style="width:87.6%"></i></div>
         <span class="mono">438 / 500 mahasiswa</span>
       </div>
       <button class="link" id="theme" type="button">Ganti tema tampilan</button>
+      <button class="link" id="logout" type="button">Keluar dari akun</button>
     </div>
   </aside>
   <main id="view"></main>
