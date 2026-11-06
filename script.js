@@ -5,7 +5,7 @@
 
   /* ---------- data contoh ---------- */
   var courses = [
-    { id: 'jarkom', kode: 'IF2101', nama: 'Jaringan Komputer', dosen: 'Dr. Rina Kusuma, M.Kom.', sks: 3, pertemuan: [
+    { id: 'jarkom', kode: 'IF2101', nama: 'Jaringan Komputer', dosen: 'James Adam Seo, S.Kom., M.Kom.', sks: 3, pertemuan: [
       { t: 'Pertemuan 7 · Model OSI dan TCP/IP', items: [
         { id: 'j7a', tipe: 'PDF', judul: 'Modul 7: Lapisan OSI dan TCP/IP', meta: '24 halaman' },
         { id: 'j7b', tipe: 'VIDEO', judul: 'Rekaman kuliah: perjalanan satu paket data', meta: '42 menit' },
@@ -16,19 +16,19 @@
       { t: 'Pertemuan 9 · Routing Statis dan Dinamis', items: [
         { id: 'j9a', tipe: 'SLIDE', judul: 'Cara router memilih jalur', meta: '27 slide' },
         { id: 'j9b', tipe: 'TAUTAN', judul: 'Simulator jaringan untuk praktikum', meta: 'Tautan luar' } ] } ] },
-    { id: 'basdat', kode: 'IF2103', nama: 'Basis Data', dosen: 'Ir. Bagus Santoso, M.T.', sks: 3, pertemuan: [
-      { t: 'Pertemuan 8 · Dasar SQL', items: [
-        { id: 'b8a', tipe: 'PDF', judul: 'Modul 8: SELECT, WHERE, dan ORDER BY', meta: '16 halaman' },
-        { id: 'b8b', tipe: 'VIDEO', judul: 'Praktik query pada basis data perpustakaan', meta: '38 menit' } ] },
-      { t: 'Pertemuan 9 · Join dan Agregasi', items: [
-        { id: 'b9a', tipe: 'SLIDE', judul: 'INNER JOIN, LEFT JOIN, dan GROUP BY', meta: '29 slide' },
-        { id: 'b9b', tipe: 'PDF', judul: 'Kumpulan soal latihan query', meta: '10 halaman' } ] } ] },
-    { id: 'spk', kode: 'IF3105', nama: 'Sistem Penunjang Keputusan', dosen: 'Dr. Maya Lestari, M.Si.', sks: 3, pertemuan: [
-      { t: 'Pertemuan 8 · Metode AHP', items: [
-        { id: 's8a', tipe: 'PDF', judul: 'Modul 8: Hierarki dan matriks perbandingan', meta: '20 halaman' },
-        { id: 's8b', tipe: 'VIDEO', judul: 'Contoh perhitungan bobot kriteria', meta: '29 menit' } ] },
-      { t: 'Pertemuan 9 · Metode SAW', items: [
-        { id: 's9a', tipe: 'SLIDE', judul: 'Normalisasi dan perangkingan alternatif', meta: '22 slide' } ] } ] },
+    { id: 'basdat', kode: 'IF2103', nama: 'Cloud Computing', dosen: 'James Adam Seo, S.Kom., M.Kom.', sks: 3, pertemuan: [
+      { t: 'Pertemuan 8 · Model Layanan Cloud', items: [
+        { id: 'b8a', tipe: 'PDF', judul: 'Modul 8: IaaS, PaaS, dan SaaS', meta: '16 halaman' },
+        { id: 'b8b', tipe: 'VIDEO', judul: 'Demo membuat mesin virtual di cloud', meta: '38 menit' } ] },
+      { t: 'Pertemuan 9 · Penyimpanan dan Skalabilitas', items: [
+        { id: 'b9a', tipe: 'SLIDE', judul: 'Object storage, load balancer, dan autoscaling', meta: '29 slide' },
+        { id: 'b9b', tipe: 'PDF', judul: 'Kumpulan soal latihan cloud computing', meta: '10 halaman' } ] } ] },
+    { id: 'spk', kode: 'IF3105', nama: 'Layanan Sistem Virtual', dosen: 'James Adam Seo, S.Kom., M.Kom.', sks: 3, pertemuan: [
+      { t: 'Pertemuan 8 · Pengenalan Virtualisasi', items: [
+        { id: 's8a', tipe: 'PDF', judul: 'Modul 8: Hypervisor tipe 1 dan tipe 2', meta: '20 halaman' },
+        { id: 's8b', tipe: 'VIDEO', judul: 'Instalasi mesin virtual dengan VirtualBox', meta: '29 menit' } ] },
+      { t: 'Pertemuan 9 · Jaringan dan Penyimpanan Virtual', items: [
+        { id: 's9a', tipe: 'SLIDE', judul: 'Virtual switch, NAT, dan bridge', meta: '22 slide' } ] } ] },
     { id: 'web', kode: 'IF2107', nama: 'Pemrograman Web', dosen: 'Yoga Mahendra, S.Kom., M.Cs.', sks: 3, pertemuan: [
       { t: 'Pertemuan 8 · Formulir dan Validasi', items: [
         { id: 'w8a', tipe: 'PDF', judul: 'Modul 8: Elemen formulir HTML', meta: '14 halaman' },
@@ -40,15 +40,15 @@
   function cById(id) { return courses.filter(function (c) { return c.id === id; })[0]; }
 
   var tugas = [
-    { id: 't1', c: 'jarkom', judul: 'Laporan Praktikum Subnetting', due: at(1), desc: 'Bagi jaringan 192.168.10.0/24 menjadi 6 subnet. Sertakan tabel alamat jaringan, rentang host, dan broadcast.' },
-    { id: 't2', c: 'basdat', judul: 'Rancangan ERD Sistem Perpustakaan', due: at(3), desc: 'Gambar ERD dengan minimal 5 entitas beserta kardinalitasnya. Kumpulkan dalam format PDF.' },
+    { id: 't1', c: 'spk', judul: 'Laporan Instalasi Mesin Virtual', due: at(1), desc: 'Instal satu mesin virtual Linux dengan VirtualBox atau VMware. Sertakan tangkapan layar tiap tahap dan spesifikasi yang dipilih.' },
+    { id: 't2', c: 'basdat', judul: 'Perbandingan IaaS, PaaS, dan SaaS', due: at(3), desc: 'Buat tabel perbandingan tiga model layanan cloud beserta satu contoh penyedia untuk masing-masing. Kumpulkan dalam format PDF.' },
     { id: 't4', c: 'web', judul: 'Prototipe Halaman Login', due: at(5), desc: 'Buat halaman login dengan HTML dan CSS yang tampil baik di layar ponsel. Kumpulkan sebagai berkas ZIP.' },
     { id: 't5', c: 'jarkom', judul: 'Tugas 5: Konfigurasi Routing Statis', due: at(-1), desc: 'Laporan konfigurasi routing statis pada topologi tiga router.' },
-    { id: 't3', c: 'spk', judul: 'Ringkasan Metode AHP', due: at(-4), desc: 'Ringkasan satu halaman tentang langkah-langkah metode AHP.' }
+    { id: 't3', c: 'spk', judul: 'Ringkasan Jenis Hypervisor', due: at(-4), desc: 'Ringkasan satu halaman tentang perbedaan hypervisor tipe 1 dan tipe 2.' }
   ];
   var baseSubs = {
-    t5: { file: 'routing_statis_aditya.zip', at: at(-1, 20, 15) },
-    t3: { file: 'AHP_Aditya.pdf', at: at(-4, 14, 5), nilai: 88, catatan: 'Langkah perhitungan sudah runtut. Tambahkan uji konsistensi pada tugas berikutnya.' }
+    t5: { file: 'routing_statis_madonia.zip', at: at(-1, 20, 15) },
+    t3: { file: 'Hypervisor_Madonia.pdf', at: at(-4, 14, 5), nilai: 88, catatan: 'Penjelasan sudah runtut. Tambahkan contoh produk untuk tiap tipe hypervisor.' }
   };
 
   var exams = [
@@ -58,13 +58,13 @@
       { q: 'Berapa nomor port bawaan untuk HTTPS?', o: ['80', '443', '21', '25'], a: 1 },
       { q: 'Perangkat apa yang meneruskan paket antar jaringan yang berbeda?', o: ['Hub', 'Switch', 'Router', 'Repeater'], a: 2 },
       { q: 'Subnet mask untuk prefiks /24 adalah...', o: ['255.0.0.0', '255.255.0.0', '255.255.255.0', '255.255.255.252'], a: 2 } ] },
-    { id: 'e2', c: 'basdat', judul: 'Kuis 3: Dasar SQL', buka: at(0, 6, 0), tutup: at(4), menit: 15, soal: [
-      { q: 'Perintah SQL untuk mengambil data dari tabel adalah...', o: ['SELECT', 'INSERT', 'UPDATE', 'DROP'], a: 0 },
-      { q: 'Apa ciri utama primary key?', o: ['Boleh berulang', 'Nilainya unik dan tidak NULL', 'Selalu berupa teks', 'Hanya ada pada tabel kecil'], a: 1 },
-      { q: 'JOIN digunakan untuk...', o: ['Menghapus tabel', 'Mengurutkan baris', 'Menggabungkan baris dari dua tabel berdasarkan kolom terkait', 'Membuat indeks'], a: 2 },
-      { q: 'Klausa mana yang menyaring hasil setelah GROUP BY?', o: ['WHERE', 'HAVING', 'ORDER BY', 'LIMIT'], a: 1 },
-      { q: 'Tujuan utama normalisasi adalah...', o: ['Mempercepat internet', 'Mengurangi redundansi data', 'Menambah jumlah tabel sebanyak mungkin', 'Mengenkripsi data'], a: 1 } ] },
-    { id: 'e3', c: 'basdat', judul: 'Ujian Tengah Semester Basis Data', buka: at(6, 9, 0), tutup: at(6, 11, 0), menit: 90, soal: [] },
+    { id: 'e2', c: 'basdat', judul: 'Kuis 3: Dasar Cloud Computing', buka: at(0, 6, 0), tutup: at(4), menit: 15, soal: [
+      { q: 'Model layanan cloud yang menyediakan infrastruktur seperti server dan penyimpanan adalah...', o: ['IaaS', 'PaaS', 'SaaS', 'DaaS'], a: 0 },
+      { q: 'Manakah contoh SaaS?', o: ['Layanan email berbasis web', 'Mesin virtual kosong', 'Server fisik di ruang data', 'Kabel jaringan'], a: 0 },
+      { q: 'Apa keuntungan utama elastisitas pada cloud?', o: ['Kapasitas dapat naik atau turun sesuai kebutuhan', 'Harga selalu tetap', 'Tidak memerlukan internet', 'Data tidak pernah hilang'], a: 0 },
+      { q: 'Model penerapan cloud yang dipakai khusus untuk satu organisasi disebut...', o: ['Public cloud', 'Private cloud', 'Hybrid cloud', 'Community cloud'], a: 1 },
+      { q: 'Pay-as-you-go berarti...', o: ['Bayar di muka untuk lima tahun', 'Bayar sesuai pemakaian sumber daya', 'Gratis selamanya', 'Bayar hanya saat terjadi error'], a: 1 } ] },
+    { id: 'e3', c: 'basdat', judul: 'Ujian Tengah Semester Cloud Computing', buka: at(6, 9, 0), tutup: at(6, 11, 0), menit: 90, soal: [] },
     { id: 'e4', c: 'web', judul: 'Kuis 1: HTML dan CSS', buka: at(-12, 8, 0), tutup: at(-10), menit: 10, soal: [] }
   ];
   var baseResults = { e4: { skor: 85, at: at(-11, 9, 20) } };
@@ -132,7 +132,7 @@
     var pend = tugas.filter(function (t) { return taskStatus(t) === 'belum'; }).sort(function (a, b) { return a.due - b.due; });
     var open = exams.filter(function (e) { return examStatus(e) === 'buka'; });
     var run = state.exam;
-    var html = '<div class="head"><span class="eyebrow">Semester Ganjil 2026/2027</span><h1>' + sapa + ', Aditya</h1><p>Materi, tugas, dan ujian semua mata kuliahmu ada di sini. Kerjakan dari perangkat apa saja.</p></div>';
+    var html = '<div class="head"><span class="eyebrow">Semester Ganjil 2026/2027</span><h1>' + sapa + ', Madonia</h1><p>Materi, tugas, dan ujian semua mata kuliahmu ada di sini. Kerjakan dari perangkat apa saja.</p></div>';
     html += '<div class="cols"><section class="panel"><h2>Tugas yang perlu dikerjakan</h2>';
     html += pend.length ? '<ul class="rows">' + pend.map(function (t) {
       return '<li><div class="t"><b>' + esc(t.judul) + '</b><span class="sub">' + esc(cById(t.c).nama) + ' · tenggat ' + fmt(t.due) + '</span></div><span class="pill wait">' + rel(t.due) + '</span></li>';
